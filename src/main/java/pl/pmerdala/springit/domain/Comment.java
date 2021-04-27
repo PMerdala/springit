@@ -1,4 +1,4 @@
-package pl.pmerdala.springit.datamodel.domain;
+package pl.pmerdala.springit.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
