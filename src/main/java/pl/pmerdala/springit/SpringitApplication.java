@@ -23,16 +23,4 @@ public class SpringitApplication {
         SpringApplication.run(SpringitApplication.class, args);
     }
 
-    @Bean
-    CommandLineRunner runner(LinkRepository linkRepository, CommentRepository commentRepository){
-        return args -> {
-            Link link = new Link("Strona pomagam-it","https://pomagam-it.pl");
-            link = linkRepository.save(link);
-            Comment comment = new Comment("Super strona",link);
-            comment = commentRepository.save(comment);
-            link.addComment(comment);
-            log.info("SpringApplication runner ...");
-        };
-    }
-
 }
