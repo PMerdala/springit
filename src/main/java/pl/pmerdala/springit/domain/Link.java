@@ -13,15 +13,22 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@RequiredArgsConstructor
 @Entity
 public class Link extends Auditable{
     @Id
     @GeneratedValue
     private Long id;
+
     @NonNull
     private String title;
     @NonNull
     private String url;
+
     @OneToMany(mappedBy = "link")
     private List<Comment> comments = new ArrayList<>();
+
+    public void addComment(Comment comment){
+        comments.add(comment);
+    }
 }

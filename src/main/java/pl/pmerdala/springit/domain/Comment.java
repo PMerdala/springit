@@ -1,9 +1,6 @@
 package pl.pmerdala.springit.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,12 +11,15 @@ import javax.persistence.ManyToOne;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@RequiredArgsConstructor
 @Entity
 public class Comment extends Auditable {
     @Id
     @GeneratedValue
     private Long id;
+    @NonNull
     private String body;
     @ManyToOne
+    @NonNull
     private Link link;
 }
