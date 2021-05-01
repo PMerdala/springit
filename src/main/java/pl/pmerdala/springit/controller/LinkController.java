@@ -16,12 +16,12 @@ public class LinkController {
         this.linkRepository = linkRepository;
     }
 
-    @GetMapping(path = {"/", ""})
+    @GetMapping("/")
     List<Link> links() {
         return linkRepository.findAll();
     }
 
-    @PostMapping(path = {"/", ""})
+    @PostMapping("/")
     Link create(@ModelAttribute CreateOrUpdateLinkData linkData) {
         Link link = new Link(linkData.getTitle(), linkData.getUrl());
         return linkRepository.save(link);
