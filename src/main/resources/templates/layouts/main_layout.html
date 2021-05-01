@@ -1,33 +1,25 @@
 <!DOCTYPE html>
 <html lang="pl" xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://thymeleaf.org">
-
-<head>
-
+      xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
     <meta content="" name="description">
     <meta content="" name="author">
-
-    <title>Springit - Spring Boot Reddit Clone</title>
-
+    <title th:text="${title}">Springit - Spring Boot Reddit Clone</title>
     <!-- Bootstrap core CSS -->
-    <link href="../../static/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
-
+    <link rel="stylesheet" th:href="@{/libs/bootstrap/css/bootstrap.min.css}"/>
     <!-- Custom styles for this template -->
-    <link href="../../static/css/springit.css" rel="stylesheet">
-
+    <link rel="stylesheet" th:href="@{/css/springit.css}">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Oswald|Roboto" rel="stylesheet">
-
     <!-- Font Awesome (for icons) -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
 </head>
-
 <body>
 
 <!-- Navigation -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-spring fixed-top">
+<nav class="navbar navbar-expand-lg navbar-dark bg-spring fixed-top" th:fragment="navigation">
     <div class="container">
         <a class="navbar-brand" href="/">
             <i aria-hidden="true" class="fa fa-leaf"></i>
@@ -48,7 +40,7 @@
 
                 <!-- if user is signed in -->
                 <li class="nav-item">
-                    <a class="nav-link" href="submit.html">
+                    <a class="nav-link" th:href="@{/link/submit}">
                         <i aria-hidden="true" class="fa fa-link"></i> Submit Link</a>
                 </li>
                 <li class="nav-item">
@@ -74,55 +66,22 @@
     </div>
 </nav>
 
-<div class="jumbotron jumbotron-fluid">
+<div class="jumbotron jumbotron-fluid" th:fragment="jumbotron">
     <div align="center" class="container">
         <h2 class="display-4">Spring Boot Reddit Clone</h2>
         <p class="lead">This is a reddit clone built using <a href="#">Spring Boot 2</a>, <a href="#"></a>Spring
             Framework 5</a> & so many other great projects! If you would like to learn how to build this
             application you can check out my course, <a href="#">Getting Started with Spring Boot 2</a>.</p>
-        <button class="btn btn-success" type="button"><i class="fab fa-github"></i> Github Repo</button>
-        <button class="btn btn-success" type="button"><i class="fas fa-graduation-cap"></i> Spring Boot 2 Course
-        </button>
+        <a class="btn btn-success" href="http://www.github.com/cfaddict/springit" target="_blank"><i
+                class="fab fa-github"></i> Github Repo</a>
+        <a class="btn btn-success" href="https://therealdanvega.teachable.com/p/spring-boot-2" target="_blank"><i
+                class="fas fa-graduation-cap"></i> Spring Boot 2 Course</a>
     </div>
 </div>
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-3"></div>
-        <div class="col-md-6">
-            <h4>Submit Link</h4>
-            <br/>
-            <form method="POST" th:action="@{/submit-link}" th:object="${link}">
-                <div class="form-group">
-                    <label for="title">Title</label>
-                    <input class="form-control"
-                           id="title"
-                           placeholder="Enter Title"
-                           required="required"
-                           th:field="*{title}"
-                           type="text">
-                    <small style="color:red;" th:errors="*{title}"></small>
-                </div>
-                <div class="form-group">
-                    <label for="url">URL</label>
-                    <input class="form-control" id="url" placeholder="URL" required="required" th:field="*{url}"
-                           type="url">
-                    <small style="color:red;" th:errors="*{url}"></small>
-                </div>
-                <div class="form-group">
-                    <label for="description">Description</label>
-                    <textarea class="form-control" id="description" rows="3" th:field="*{description}"></textarea>
-                </div>
-                <button class="btn btn-primary" type="submit">Submit</button>
-            </form>
-        </div>
-        <div class="col-md-3"></div>
-    </div>
+<div class="container" th:fragment="content">
+    <p>This is your main content</p>
 </div>
-
-<!-- Bootstrap core JavaScript -->
-
 
 </body>
-
 </html>
