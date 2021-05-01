@@ -1,13 +1,13 @@
 package pl.pmerdala.springit.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 
-@RestController
+@Controller
 public class HomeController {
-
-    @RequestMapping("/")
-    String home(){
-        return "Hello First Home Controller!";
+    @GetMapping("/")
+    String home() {
+        return "index";
     }
 }
+
