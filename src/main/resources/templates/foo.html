@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<!--/*-->
+<!--@thymesVar id="pageTitle" type="java.lang.String"-->
+<!--*/-->
+<head th:replace="~{layouts/main_layout :: head(title = ${pageTitle})}">
+</head>
+<body>
+<nav th:replace="~{layouts/main_layout :: nav}"></nav>
+<div th:replace="~{layouts/main_layout :: jumbotron}"></div>
+<div class="container">
+    <p>This is my foo content</p>
+</div>
+</body>
+</html>

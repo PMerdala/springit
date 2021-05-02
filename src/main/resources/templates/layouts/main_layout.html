@@ -8,7 +8,7 @@
     <meta content="" name="author">
     <title th:text="${title}">Springit - Spring Boot Reddit Clone</title>
     <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" th:href="@{/libs/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/libs/bootstrap/css/bootstrap.min.css}" type="text/css"/>
     <!-- Custom styles for this template -->
     <link rel="stylesheet" th:href="@{/css/springit.css}">
     <!-- Google Fonts -->
@@ -67,12 +67,12 @@
 </nav>
 
 <div class="jumbotron jumbotron-fluid" th:fragment="jumbotron">
-    <div align="center" class="container">
+    <div class="container" style="text-align:center">
         <h2 class="display-4">Spring Boot Reddit Clone</h2>
-        <p class="lead">This is a reddit clone built using <a href="#">Spring Boot 2</a>, <a href="#"></a>Spring
+        <p class="lead">This is a reddit clone built using <a href="#">Spring Boot 2</a>, <a href="#">Spring
             Framework 5</a> & so many other great projects! If you would like to learn how to build this
             application you can check out my course, <a href="#">Getting Started with Spring Boot 2</a>.</p>
-        <a class="btn btn-success" href="http://www.github.com/cfaddict/springit" target="_blank"><i
+        <a class="btn btn-success" href="https://www.github.com/cfaddict/springit" target="_blank"><i
                 class="fab fa-github"></i> Github Repo</a>
         <a class="btn btn-success" href="https://therealdanvega.teachable.com/p/spring-boot-2" target="_blank"><i
                 class="fas fa-graduation-cap"></i> Spring Boot 2 Course</a>
