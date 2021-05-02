@@ -1,49 +1,110 @@
 package pl.pmerdala.springit.controller;
 
-import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pl.pmerdala.springit.domain.Link;
 import pl.pmerdala.springit.repositories.LinkRepository;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
-@RestController
-@RequestMapping("/links")
+@Controller
+@Slf4j
 public class LinkController {
     private final LinkRepository linkRepository;
+    private final MapLinkViewLinkData mapLinkViewLinkData;
 
-    public LinkController(LinkRepository linkRepository) {
+    public LinkController(LinkRepository linkRepository, MapLinkViewLinkData mapLinkViewLinkData) {
         this.linkRepository = linkRepository;
+        this.mapLinkViewLinkData = mapLinkViewLinkData;
     }
+
 
     @GetMapping("/")
-    List<Link> links() {
-        return linkRepository.findAll();
+    String links(Model model) {
+        List<ViewLinkData> viewLinkDataList = mapLinkViewLinkData.viewLinkDataList(linkRepository.findAll());
+        model.addAttribute("links", viewLinkDataList);
+        return "link/list";
     }
 
-    @PostMapping("/")
-    Link create(@ModelAttribute CreateOrUpdateLinkData linkData) {
-        Link link = new Link(linkData.getTitle(), linkData.getUrl());
-        return linkRepository.save(link);
+    @GetMapping("/link/{id}")
+    String link(@PathVariable Long id, Model model) {
+        Optional<Link> link = linkRepository.findById(id);
+        if (link.isEmpty()) {
+            return "redirect:/";
+        }
+        ViewLinkData viewLinkData = mapLinkViewLinkData.viewLinkData(link.get());
+        model.addAttribute("link", viewLinkData);
+        model.addAttribute("success", model.containsAttribute("success"));
+        return "link/view";
     }
 
-    @GetMapping("/{linkId}")
-    Optional<Link> get(@PathVariable Long linkId) {
-        return linkRepository.findById(linkId);
+    @PostMapping("/link/submit")
+    String addLink(@Valid @ModelAttribute("link") CreateOrUpdateLinkData data,
+                   BindingResult bindingResult,
+                   Model model,
+                   RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("action", "/link/submit");
+            return "link/submit";
+        }
+        Link link = mapLinkViewLinkData.link(data);
+        Link savedLink = linkRepository.save(link);
+        redirectAttributes
+                .addAttribute("id", savedLink.getId())
+                .addFlashAttribute("success", true);
+        //noinspection SpringMVCViewInspection
+        return "redirect:/link/{id}";
     }
 
-    @PutMapping("/{linkId}")
-    Link update(@PathVariable Long linkId, @ModelAttribute CreateOrUpdateLinkData linkData) {
-        Optional<Link> link = linkRepository.findById(linkId);
-        return link.map(linkToSave -> {
-            linkToSave.setTitle(linkData.getTitle());
-            linkToSave.setUrl(linkData.getUrl());
-            return linkToSave;
-        }).orElse(null);
+    @PostMapping("/link/submit/{id}")
+    String updateLink(@PathVariable Long id,
+                      @Valid @ModelAttribute("link") CreateOrUpdateLinkData data,
+                      BindingResult bindingResult,
+                      Model model,
+                      RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("action", String.format("/link/submit/%d", id));
+            return "link/submit";
+        }
+        Optional<Link> optionalLink = linkRepository.findById(id);
+        if (optionalLink.isPresent()) {
+            Link link = optionalLink.get();
+            mapLinkViewLinkData.updateLink(data, link);
+            Link savedLink = linkRepository.save(link);
+            redirectAttributes
+                    .addAttribute("id", savedLink.getId())
+                    .addFlashAttribute("success", true);
+            //noinspection SpringMVCViewInspection
+            return "redirect:/link/{id}";
+        }
+        return "redirect:/";
     }
 
-    @DeleteMapping("/{linkId}")
-    void delete(@PathVariable Long linkId) {
-        linkRepository.deleteById(linkId);
+    @GetMapping("/link/submit")
+    String newLinkForm(Model model) {
+        model.addAttribute("link", new CreateOrUpdateLinkData());
+        model.addAttribute("action", "/link/submit");
+        return "link/submit";
+    }
+
+    @GetMapping("/link/submit/{id}")
+    String updateLinkForm(@PathVariable Long id, Model model) {
+        Optional<Link> link = linkRepository.findById(id);
+        if (link.isEmpty()) {
+            return "redirect:/";
+        }
+        CreateOrUpdateLinkData data = link.map(mapLinkViewLinkData::createOrUpdateLinkData).orElseThrow();
+        model.addAttribute("link", data);
+        model.addAttribute("action", String.format("/link/submit/%d", link.get().getId()));
+        return "link/submit";
     }
 }
