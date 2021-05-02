@@ -34,3 +34,6 @@ build/
 
 ### apss ###
 application-*.properties
+
+## Macos ###
+.DS_Store
