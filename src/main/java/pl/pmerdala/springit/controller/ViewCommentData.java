@@ -12,9 +12,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class ViewCommentData {
-    Long id;
-    String body;
-    LocalDateTime creationDate;
-    String formatCreationDate;
-    ViewLinkData link;
+    private Long id;
+    private String body;
+    private LocalDateTime creationDate;
+    private String formatCreationDate;
+    private ViewLinkData link;
 }
