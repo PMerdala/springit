@@ -3,6 +3,8 @@ package pl.pmerdala.springit.controller;
 import org.springframework.stereotype.Component;
 import pl.pmerdala.springit.domain.Comment;
 import pl.pmerdala.springit.domain.Link;
+import pl.pmerdala.springit.domain.User;
+import pl.pmerdala.springit.repositories.UserRepository;
 import pl.pmerdala.springit.service.DateTimeFormatter;
 
 import java.net.URISyntaxException;
@@ -13,10 +15,12 @@ import java.util.stream.Collectors;
 public class MapLinkViewLinkData {
     private final MapCommentViewCommentData mapCommentViewCommentData;
     private final DateTimeFormatter dateTimeFormatter;
+    private final UserRepository userRepository;
 
-    public MapLinkViewLinkData(MapCommentViewCommentData mapCommentViewCommentData, DateTimeFormatter dateTimeFormatter) {
+    public MapLinkViewLinkData(MapCommentViewCommentData mapCommentViewCommentData, DateTimeFormatter dateTimeFormatter, UserRepository userRepository) {
         this.mapCommentViewCommentData = mapCommentViewCommentData;
         this.dateTimeFormatter = dateTimeFormatter;
+        this.userRepository = userRepository;
     }
 
     ViewLinkData viewLinkData(Link link) {
@@ -28,9 +32,14 @@ public class MapLinkViewLinkData {
                 .numberOfComments(link.getComments().size())
                 .formatCreationDate(dateTimeFormatter.format(link.getCreatedDate()))
                 .creationDate(link.getCreatedDate())
+                .createdBy(getUserFullName(link))
                 .build();
         linkData.setComments(viewCommentDataList(link.getComments(), linkData));
         return linkData;
+    }
+
+    private String getUserFullName(Link link) {
+        return userRepository.findByLogin(link.getCreatedBy()).map(User::getUserFullName).orElse("Unknown");
     }
 
     Link link(CreateOrUpdateLinkData data) {

@@ -13,6 +13,6 @@ public class AuditorAwareImpl implements AuditorAware<String> {
 
         return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
                 .map(Authentication::getPrincipal)
-                .map(o -> ((User) o).getLogin()).or(() -> Optional.of("-1"));
+                .map(o -> ((User) o).getLogin()).or(() -> Optional.of("super@gmail.com"));
     }
 }

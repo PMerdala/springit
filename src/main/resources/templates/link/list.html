@@ -32,7 +32,7 @@
                         hours ago
                     </time>
                     by
-                    <a class="author" href="../auth/profile.html">therealdanvega</a>
+                    <a class="author" href="../auth/profile.html" th:text="${link.createdBy}">therealdanvega</a>
                 </p>
                 <p>
                     <a class="comments" th:href="@{/link/{linkId}#comments(linkId=${link.id})}"><i

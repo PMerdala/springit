@@ -19,6 +19,7 @@ public class ViewLinkData {
     private String domainName;
     private String formatCreationDate;
     private LocalDateTime creationDate;
+    private String createdBy;
     private Integer numberOfComments;
     private List<ViewCommentData> comments;
 }
