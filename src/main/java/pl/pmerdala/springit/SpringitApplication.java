@@ -6,12 +6,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import pl.pmerdala.springit.config.SpringitProperties;
 
 @SpringBootApplication
 @EnableConfigurationProperties(SpringitProperties.class)
-@EnableJpaAuditing
 @Slf4j
 public class SpringitApplication {
 
@@ -22,6 +21,11 @@ public class SpringitApplication {
     @Bean
     PrettyTime prettyTime() {
         return new PrettyTime();
+    }
+
+    @Bean
+    BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
 }

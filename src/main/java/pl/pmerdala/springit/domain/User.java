@@ -10,6 +10,7 @@ import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,13 +25,15 @@ public class User extends Auditable implements UserDetails {
     @GeneratedValue
     private Long id;
     @NonNull
-    @Size(min = 6, max = 100)
     @Column(nullable = false)
     private String userFullName;
     @NonNull
     @Size(min = 6, max = 100)
     @Column(nullable = false, unique = true)
     private String email;
+    @Size(min = 6, max = 100)
+    @Column(nullable = false, unique = true)
+    private String login;
     @NonNull
     @Column(nullable = false)
     private String password;
@@ -38,8 +41,10 @@ public class User extends Auditable implements UserDetails {
     private LocalDateTime expiredDate;
     private Boolean accountLocked;
     private LocalDateTime credentialsExpiredDate;
+
+    @NonNull
     @Column(nullable = false)
-    private Boolean enabled = true;
+    private Boolean enabled;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
@@ -78,5 +83,19 @@ public class User extends Auditable implements UserDetails {
     @Override
     public String getUsername() {
         return email;
+    }
+
+    public void addRoles(Collection<Role> newRoles) {
+        roles.addAll(newRoles);
+    }
+
+    public void addRole(Role role) {
+        roles.add(role);
+    }
+
+    @PrePersist
+    @PreUpdate
+    private void prepare() {
+        login = email.toLowerCase(Locale.ROOT);
     }
 }

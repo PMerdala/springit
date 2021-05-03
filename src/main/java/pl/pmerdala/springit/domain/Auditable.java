@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
@@ -26,8 +27,10 @@ public class Auditable {
     private LocalDateTime lastUpdateDate;
 
     @CreatedBy
+    @Size(max = 100)
     private String createdBy;
 
     @LastModifiedBy
+    @Size(max = 100)
     private String modifiedBy;
 }
