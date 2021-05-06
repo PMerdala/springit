@@ -21,10 +21,17 @@ import java.util.Optional;
 public class LinkController {
     private final LinkRepository linkRepository;
     private final MapLinkViewLinkData mapLinkViewLinkData;
+    private final MapCreateOrUpdateLinkDataToLink mapCreateOrUpdateLinkDataToLink;
+    private final MapLinkToCreateOrUpdateLinkData mapLinkToCreateOrUpdateLinkData;
 
-    public LinkController(LinkRepository linkRepository, MapLinkViewLinkData mapLinkViewLinkData) {
+    public LinkController(LinkRepository linkRepository,
+                          MapLinkViewLinkData mapLinkViewLinkData,
+                          MapCreateOrUpdateLinkDataToLink mapCreateOrUpdateLinkDataToLink,
+                          MapLinkToCreateOrUpdateLinkData mapLinkToCreateOrUpdateLinkData) {
         this.linkRepository = linkRepository;
         this.mapLinkViewLinkData = mapLinkViewLinkData;
+        this.mapCreateOrUpdateLinkDataToLink = mapCreateOrUpdateLinkDataToLink;
+        this.mapLinkToCreateOrUpdateLinkData = mapLinkToCreateOrUpdateLinkData;
     }
 
 
@@ -56,7 +63,7 @@ public class LinkController {
             model.addAttribute("action", "/link/submit");
             return "link/submit";
         }
-        Link link = mapLinkViewLinkData.link(data);
+        Link link = mapCreateOrUpdateLinkDataToLink.link(data);
         Link savedLink = linkRepository.save(link);
         redirectAttributes
                 .addAttribute("id", savedLink.getId())
@@ -78,7 +85,7 @@ public class LinkController {
         Optional<Link> optionalLink = linkRepository.findById(id);
         if (optionalLink.isPresent()) {
             Link link = optionalLink.get();
-            mapLinkViewLinkData.updateLink(data, link);
+            mapCreateOrUpdateLinkDataToLink.updateLink(data, link);
             Link savedLink = linkRepository.save(link);
             redirectAttributes
                     .addAttribute("id", savedLink.getId())
@@ -102,7 +109,7 @@ public class LinkController {
         if (link.isEmpty()) {
             return "redirect:/";
         }
-        CreateOrUpdateLinkData data = link.map(mapLinkViewLinkData::createOrUpdateLinkData).orElseThrow();
+        CreateOrUpdateLinkData data = link.map(mapLinkToCreateOrUpdateLinkData::createOrUpdateLinkData).orElseThrow();
         model.addAttribute("link", data);
         model.addAttribute("action", String.format("/link/submit/%d", link.get().getId()));
         return "link/submit";

@@ -1,7 +1,6 @@
 package pl.pmerdala.springit.controller;
 
 import org.springframework.stereotype.Component;
-import pl.pmerdala.springit.domain.Comment;
 import pl.pmerdala.springit.domain.Link;
 import pl.pmerdala.springit.domain.User;
 import pl.pmerdala.springit.repositories.UserRepository;
@@ -9,10 +8,9 @@ import pl.pmerdala.springit.service.DateTimeFormatter;
 
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
-public class MapLinkViewLinkData {
+public class MapLinkViewLinkData extends AbstractMap<Link, ViewLinkData> {
     private final MapCommentViewCommentData mapCommentViewCommentData;
     private final DateTimeFormatter dateTimeFormatter;
     private final UserRepository userRepository;
@@ -24,7 +22,7 @@ public class MapLinkViewLinkData {
     }
 
     ViewLinkData viewLinkData(Link link) {
-        ViewLinkData linkData = ViewLinkData.builder()
+        return ViewLinkData.builder(mapCommentViewCommentData)
                 .id(link.getId())
                 .title(link.getTitle())
                 .url(link.getUrl())
@@ -33,35 +31,12 @@ public class MapLinkViewLinkData {
                 .formatCreationDate(dateTimeFormatter.format(link.getCreatedDate()))
                 .creationDate(link.getCreatedDate())
                 .createdBy(getUserFullName(link))
-                .build();
-        linkData.setComments(viewCommentDataList(link.getComments(), linkData));
-        return linkData;
-    }
-
-    private String getUserFullName(Link link) {
-        return userRepository.findByLogin(link.getCreatedBy()).map(User::getUserFullName).orElse("Unknown");
-    }
-
-    Link link(CreateOrUpdateLinkData data) {
-        return new Link(data.getTitle(), data.getUrl(), data.getDescription());
-    }
-
-    void updateLink(CreateOrUpdateLinkData data, Link link) {
-        link.setTitle(data.getTitle());
-        link.setUrl(data.getUrl());
-        link.setDescription(data.getDescription());
-    }
-
-    CreateOrUpdateLinkData createOrUpdateLinkData(Link link) {
-        return CreateOrUpdateLinkData.builder()
-                .title(link.getTitle())
-                .url(link.getUrl())
-                .description(link.getDescription())
+                .domainComments(link.getComments())
                 .build();
     }
 
     List<ViewLinkData> viewLinkDataList(List<Link> links) {
-        return links.stream().map(this::viewLinkData).collect(Collectors.toUnmodifiableList());
+        return map(links);
     }
 
     private String getDomainName(Link link) {
@@ -70,10 +45,15 @@ public class MapLinkViewLinkData {
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
-        return "";
+        return "Error domain name";
     }
 
-    private List<ViewCommentData> viewCommentDataList(List<Comment> comments, ViewLinkData linkData) {
-        return mapCommentViewCommentData.viewCommentDataList(comments, linkData);
+    private String getUserFullName(Link link) {
+        return userRepository.findByLogin(link.getCreatedBy()).map(User::getUserFullName).orElse("Unknown");
+    }
+
+    @Override
+    protected ViewLinkData map(Link link, Object... args) {
+        return viewLinkData(link);
     }
 }

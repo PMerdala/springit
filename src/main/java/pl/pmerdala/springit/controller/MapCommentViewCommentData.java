@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class MapCommentViewCommentData {
+public class MapCommentViewCommentData extends AbstractMap<Comment,ViewCommentData> {
 
     private final DateTimeFormatter dateTimeFormatter;
 
@@ -28,8 +28,11 @@ public class MapCommentViewCommentData {
     }
 
     List<ViewCommentData> viewCommentDataList(List<Comment> comments, ViewLinkData linkData) {
-        return comments.stream()
-                .map(comment -> viewCommentData(comment, linkData))
-                .collect(Collectors.toUnmodifiableList());
+        return map(comments,linkData);
+    }
+
+    @Override
+    protected ViewCommentData map(Comment comment, Object... args) {
+        return viewCommentData(comment,(ViewLinkData)args[0]);
     }
 }
