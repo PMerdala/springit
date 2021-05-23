@@ -14,6 +14,9 @@ button.nav-link {
     background: #2D2A27;
     border: none;
     cursor: pointer;
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    padding-right: 10px;
 }
 
 
