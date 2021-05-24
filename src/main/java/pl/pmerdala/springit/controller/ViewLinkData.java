@@ -22,4 +22,5 @@ public class ViewLinkData {
     private String createdBy;
     private Integer numberOfComments;
     private List<ViewCommentData> comments;
+    private int vote;
 }

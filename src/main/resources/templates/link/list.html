@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pl" xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <!--/*-->
 <!--@thymesVar id="links" type="java.util.List<pl.pmerdala.springit.controller.ViewLinkData>"-->
 <!--*/-->
@@ -14,9 +15,9 @@
     <div th:each="link : ${links}">
         <div class="row link">
             <div class="col-1">
-                <div><a class="upvote" href="#"><i class="fas fa-arrow-up"></i></a></div>
-                <div><span class="votecount">3</span></div>
-                <div><a class="downvote" href="#"><i class="fas fa-arrow-down"></i></a></div>
+                <div><a class="upvote" href="#" th:data-id="${link.id}"><i class="fas fa-arrow-up"></i></a></div>
+                <div><span class="votecount" th:id="|votecount-${link.id}|" th:text="${link.getVote()}">0</span></div>
+                <div><a class="downvote" href="#" th:data-id="${link.id}"><i class="fas fa-arrow-down"></i></a></div>
             </div>
             <div class="col-11">
                 <p class="title">
@@ -45,7 +46,21 @@
     </div>
 
 </div>
-
+<script>
+    const allVotes = document.querySelectorAll(".upvote, .downvote");
+    for (let i=0; i<allVotes.length;i++){
+        let className=allVotes[i].className;
+        allVotes[i].addEventListener('click',function(event){
+           const direction = className==='upvote'? 1:-1;
+           const linkId = this.getAttribute('data-id');
+           const voteSum = document.getElementById('votecount-' + linkId);
+           fetch(`http://localhost:8080/vote/link/${linkId}/direction/${direction}`)
+            .then(response=>response.json())
+            .then(data=>voteSum.innerHTML = data)
+            .catch(err=>console.error(err));
+        });
+    }
+</script>
 </body>
 
 </html>

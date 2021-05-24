@@ -33,6 +33,7 @@ public class MapLinkViewLinkData {
                 .formatCreationDate(dateTimeFormatter.format(link.getCreatedDate()))
                 .creationDate(link.getCreatedDate())
                 .createdBy(getUserFullName(link))
+                .vote(link.getVoteCount())
                 .build();
         linkData.setComments(viewCommentDataList(link.getComments(), linkData));
         return linkData;

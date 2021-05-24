@@ -33,6 +33,9 @@ public class Link extends Auditable{
     @OneToMany(mappedBy = "link")
     private List<Comment> comments = new ArrayList<>();
 
+    @Setter(AccessLevel.PRIVATE)
+    private int voteCount=0;
+
     public Link(@NonNull String title, @NonNull String url, String description) {
         this.title = title;
         this.url = url;
@@ -48,4 +51,13 @@ public class Link extends Auditable{
         String domain = uri.getHost();
         return domain.startsWith(HOST_NAME_PREFIX) ? domain.substring(4) : domain;
     }
+
+    public void addVote(Vote vote) {
+        voteCount+=vote.getDirection();
+    }
+
+    public void removeVote(Vote vote){
+        voteCount-=vote.getDirection();
+    }
+
 }
