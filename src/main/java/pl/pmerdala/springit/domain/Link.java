@@ -56,8 +56,4 @@ public class Link extends Auditable{
         voteCount+=vote.getDirection();
     }
 
-    public void removeVote(Vote vote){
-        voteCount-=vote.getDirection();
-    }
-
 }

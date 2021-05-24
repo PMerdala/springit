@@ -25,6 +25,4 @@ public class Vote extends Auditable{
     @NonNull
     private short direction;
 
-    @NonNull
-    private boolean enable = true;
 }

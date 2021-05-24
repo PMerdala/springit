@@ -24,20 +24,14 @@ public class VoteController {
     public int vote(Principal principle, @PathVariable Long linkId, @PathVariable short direction){
         final AtomicInteger voteCount = new AtomicInteger(0);
         linkRepository.findById(linkId).ifPresent(link->{
-            if (principle!=null && (direction==-1 || direction==1)) {
-                voteRepository.findByCreatedByAndLinkAndEnable(principle.getName(), link,true).ifPresentOrElse(vote -> {
-                    if (vote.getDirection() != direction){
-                        link.removeVote(vote);
-                        vote.setEnable(false);
-                        voteRepository.save(vote);
-                        linkRepository.save(link);
-                    }
-                }, () -> {
+            if (principle != null && Math.abs(direction) == 1) {
+                int userVote = voteRepository.voteSumByCreatedByAndLink(principle.getName(), link);
+                if ((userVote > 0 && direction < 0) || (userVote < 0 && direction > 0) || (userVote == 0)) {
                     Vote vote = new Vote(link, direction);
                     voteRepository.save(vote);
                     link.addVote(vote);
                     linkRepository.save(link);
-                });
+                }
             }
             voteCount.set(link.getVoteCount());
         });
