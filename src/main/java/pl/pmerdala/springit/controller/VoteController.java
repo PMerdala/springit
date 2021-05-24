@@ -1,5 +1,6 @@
 package pl.pmerdala.springit.controller;
 
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +22,7 @@ public class VoteController {
         this.linkRepository = linkRepository;
     }
 
+    @Secured({"ROLE_USER"})
     @GetMapping("/vote/link/{linkId}/direction/{direction}")
     public int vote(Principal principle, @PathVariable Long linkId, @PathVariable short direction){
         final AtomicInteger voteCount = new AtomicInteger(0);

@@ -46,7 +46,7 @@
     </div>
 
 </div>
-<script>
+<script sec:authorize="isFullyAuthenticated()">
     const allVotes = document.querySelectorAll(".upvote, .downvote");
     for (let i=0; i<allVotes.length;i++){
         let className=allVotes[i].className;
@@ -55,7 +55,7 @@
            const linkId = this.getAttribute('data-id');
            const voteSum = document.getElementById('votecount-' + linkId);
            fetch(`http://localhost:8080/vote/link/${linkId}/direction/${direction}`)
-            .then(response=>response.json())
+            .then(response=> response.status === 200? response.json():voteSum.innerHTML)
             .then(data=>voteSum.innerHTML = data)
             .catch(err=>console.error(err));
         });
