@@ -1,6 +1,7 @@
 package pl.pmerdala.springit.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -9,57 +10,46 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import pl.pmerdala.springit.domain.Link;
-import pl.pmerdala.springit.map.MapLinkViewLinkData;
-import pl.pmerdala.springit.repositories.LinkRepository;
+import pl.pmerdala.springit.service.LinkService;
 import pl.pmerdala.springit.viewdata.CreateOrUpdateCommentData;
 import pl.pmerdala.springit.viewdata.CreateOrUpdateLinkData;
-import pl.pmerdala.springit.viewdata.ViewLinkData;
 
 import javax.validation.Valid;
-import java.util.List;
-import java.util.Optional;
 
 @Controller
 @Slf4j
 public class LinkController {
-    private final LinkRepository linkRepository;
-    private final MapLinkViewLinkData mapLinkViewLinkData;
 
-    public LinkController(LinkRepository linkRepository, MapLinkViewLinkData mapLinkViewLinkData) {
-        this.linkRepository = linkRepository;
-        this.mapLinkViewLinkData = mapLinkViewLinkData;
+    private final LinkService linkService;
+
+    public LinkController(LinkService linkService) {
+        this.linkService = linkService;
     }
-
 
     @GetMapping("/")
     String links(Model model) {
-        List<ViewLinkData> viewLinkDataList = mapLinkViewLinkData.viewLinkDataList(linkRepository.findAll());
-        model.addAttribute("links", viewLinkDataList);
+        model.addAttribute("links", linkService.viewLinkDataList());
         return "link/list";
     }
 
     @GetMapping("/link/{id}")
     String link(@PathVariable Long id, Model model) {
-        Optional<Link> link = linkRepository.findById(id);
-        if (link.isEmpty()) {
-            return "redirect:/";
-        }
-        ViewLinkData viewLinkData = mapLinkViewLinkData.viewLinkData(link.get());
-        CreateOrUpdateCommentData commentData = new CreateOrUpdateCommentData();
-        model.addAttribute("commentData", commentData);
-        model.addAttribute("commentAddAction", String.format("/link/%d/comments", link.get().getId()));
-        model.addAttribute("link", viewLinkData);
-        model.addAttribute("success",
-                model.containsAttribute("success")
-                        || model.containsAttribute("success_comment"));
-        if (model.containsAttribute("success")) {
-            model.addAttribute("success_message", "link create success!");
-        }
-        if (model.containsAttribute("success_comment")) {
-            model.addAttribute("success_message", "comment create success!");
-        }
-        return "link/view";
+        return linkService.viewLinkDataByLinkId(id).map(viewLinkData -> {
+            CreateOrUpdateCommentData commentData = new CreateOrUpdateCommentData();
+            model.addAttribute("commentData", commentData);
+            model.addAttribute("commentAddAction", String.format("/link/%d/comments", viewLinkData.getId()));
+            model.addAttribute("link", viewLinkData);
+            model.addAttribute("success",
+                    model.containsAttribute("success")
+                            || model.containsAttribute("success_comment"));
+            if (model.containsAttribute("success")) {
+                model.addAttribute("success_message", "link create success!");
+            }
+            if (model.containsAttribute("success_comment")) {
+                model.addAttribute("success_message", "comment create success!");
+            }
+            return "link/view";
+        }).orElse("redirect:/");
     }
 
     @PostMapping("/link/submit")
@@ -71,13 +61,12 @@ public class LinkController {
             model.addAttribute("action", "/link/submit");
             return "link/submit";
         }
-        Link link = mapLinkViewLinkData.link(data);
-        Link savedLink = linkRepository.save(link);
-        redirectAttributes
-                .addAttribute("id", savedLink.getId())
-                .addFlashAttribute("success", true);
-        //noinspection SpringMVCViewInspection
-        return "redirect:/link/{id}";
+        return linkService.createLinkAndReturnId(data).map(linkId -> {
+            redirectAttributes
+                    .addAttribute("id", linkId)
+                    .addFlashAttribute("success", true);
+            return "redirect:/link/{id}";
+        }).orElse("link/submit");
     }
 
     @PostMapping("/link/submit/{id}")
@@ -90,36 +79,52 @@ public class LinkController {
             model.addAttribute("action", String.format("/link/submit/%d", id));
             return "link/submit";
         }
-        Optional<Link> optionalLink = linkRepository.findById(id);
-        if (optionalLink.isPresent()) {
-            Link link = optionalLink.get();
-            mapLinkViewLinkData.updateLink(data, link);
-            Link savedLink = linkRepository.save(link);
-            redirectAttributes
-                    .addAttribute("id", savedLink.getId())
-                    .addFlashAttribute("success", true);
-            //noinspection SpringMVCViewInspection
-            return "redirect:/link/{id}";
-        }
-        return "redirect:/";
+        return linkService.updateLinkAndReturnId(id, data)
+                .map(linkId -> {
+                    redirectAttributes
+                            .addAttribute("id", linkId)
+                            .addFlashAttribute("success", true);
+                    return "redirect:/link/{id}";
+                }).orElse("redirect:/");
     }
 
     @GetMapping("/link/submit")
     String newLinkForm(Model model) {
-        model.addAttribute("link", new CreateOrUpdateLinkData());
-        model.addAttribute("action", "/link/submit");
-        return "link/submit";
+        return linkService.linkDataForCreating().map(createOrUpdateLinkData -> {
+            model.addAttribute("link", createOrUpdateLinkData);
+            model.addAttribute("action", "/link/submit");
+            return "link/submit";
+        }).orElse("redirect:/");
     }
 
     @GetMapping("/link/submit/{id}")
     String updateLinkForm(@PathVariable Long id, Model model) {
-        Optional<Link> link = linkRepository.findById(id);
-        if (link.isEmpty()) {
-            return "redirect:/";
-        }
-        CreateOrUpdateLinkData data = link.map(mapLinkViewLinkData::createOrUpdateLinkData).orElseThrow();
-        model.addAttribute("link", data);
-        model.addAttribute("action", String.format("/link/submit/%d", link.get().getId()));
-        return "link/submit";
+        return linkService.linkDataForUpdating(id).map(createOrUpdateLinkData -> {
+            model.addAttribute("link", createOrUpdateLinkData);
+            model.addAttribute("action", String.format("/link/submit/%d", id));
+            return "link/submit";
+        }).orElse("redirect:/");
     }
+
+    @Secured({"ROLE_USER"})
+    @PostMapping("/link/{linkId}/comments")
+    String addComment(@PathVariable Long linkId,
+                      @Valid @ModelAttribute("commentData") CreateOrUpdateCommentData commentData,
+                      BindingResult bindingResult,
+                      RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addAttribute("id", linkId);
+            return "redirect:/link/{id}";
+        }
+        return linkService.addCommentAndReturnLinkId(linkId, commentData)
+                .map(afterSaveLinkId -> {
+                    redirectAttributes.addFlashAttribute("success_comment", true);
+                    redirectAttributes.addAttribute("id", afterSaveLinkId);
+                    return "redirect:/link/{id}";
+                }).orElseGet(() -> {
+                    redirectAttributes.addAttribute("id", linkId);
+                    return "redirect:/link/{id}";
+                });
+    }
+
 }

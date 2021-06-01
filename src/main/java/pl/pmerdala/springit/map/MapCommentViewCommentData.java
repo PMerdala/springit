@@ -2,8 +2,10 @@ package pl.pmerdala.springit.map;
 
 import org.springframework.stereotype.Component;
 import pl.pmerdala.springit.domain.Comment;
+import pl.pmerdala.springit.domain.Link;
 import pl.pmerdala.springit.service.DateTimeFormatter;
 import pl.pmerdala.springit.service.UserService;
+import pl.pmerdala.springit.viewdata.CreateOrUpdateCommentData;
 import pl.pmerdala.springit.viewdata.ViewCommentData;
 import pl.pmerdala.springit.viewdata.ViewLinkData;
 
@@ -37,5 +39,9 @@ public class MapCommentViewCommentData {
         return comments.stream()
                 .map(comment -> viewCommentData(comment, linkData))
                 .collect(Collectors.toUnmodifiableList());
+    }
+
+    public Comment comment(CreateOrUpdateCommentData commentData, Link link) {
+        return new Comment(commentData.getBody(), link);
     }
 }
