@@ -3,6 +3,7 @@
     xmlns:th="http://www.thymeleaf.org">
 
 
+<!--suppress HtmlRequiredTitleElement -->
 <head th:replace="~{layouts/main_layout :: head(title='Springit - Register')}">
 </head>
 
@@ -15,7 +16,7 @@
 <div class="container">
 
     <!-- User Registration form -->
-    <form action="" class="form-horizontal" method="POST" role="form">
+    <form action="" class="form-horizontal" method="POST" role="form" th:object="${registerUserData}">
         <div class="row">
             <div class="col-md-3"></div>
             <div class="col-md-6">
@@ -32,7 +33,7 @@
                     <div class="input-group mb-2 mr-sm-2 mb-sm-0">
                         <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-user"></i></div>
                         <input autofocus class="form-control" id="name" name="name"
-                               placeholder="John Doe" required type="text">
+                               placeholder="John Doe" required th:field="*{userFullName}" type="text">
                     </div>
                 </div>
             </div>
@@ -53,7 +54,7 @@
                     <div class="input-group mb-2 mr-sm-2 mb-sm-0">
                         <div class="input-group-addon" style="width: 2.6rem"><i class="fa fa-at"></i></div>
                         <input autofocus class="form-control" id="email" name="email"
-                               placeholder="you@example.com" required type="text">
+                               placeholder="you@example.com" required th:field="*{email}" type="text">
                     </div>
                 </div>
             </div>
@@ -74,7 +75,7 @@
                     <div class="input-group mb-2 mr-sm-2 mb-sm-0">
                         <div class="input-group-addon" style="width: 2.6rem"><i class="fas fa-key"></i></div>
                         <input class="form-control" id="password" name="password" placeholder="Password"
-                               required type="password">
+                               required th:field="*{password}" type="password">
                     </div>
                 </div>
             </div>
@@ -88,7 +89,7 @@
         </div>
         <div class="row">
             <div class="col-md-3 field-label-responsive">
-                <label for="password">Confirm Password</label>
+                <label for="password-confirm">Confirm Password</label>
             </div>
             <div class="col-md-6">
                 <div class="form-group">

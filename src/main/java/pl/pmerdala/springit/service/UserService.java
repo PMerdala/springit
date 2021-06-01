@@ -29,7 +29,9 @@ public class UserService {
     }
 
     public User register(RegisterUserData userData) {
-        return mapUserRegisterUserData.user(userData);
+        User user = mapUserRegisterUserData.user(userData);
+        user.setEnabled(true);
+        return save(user);
     }
 
     public User save(User user) {
