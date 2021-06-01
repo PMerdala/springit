@@ -3,9 +3,8 @@ package pl.pmerdala.springit.controller;
 import org.springframework.stereotype.Component;
 import pl.pmerdala.springit.domain.Comment;
 import pl.pmerdala.springit.domain.Link;
-import pl.pmerdala.springit.domain.User;
-import pl.pmerdala.springit.repositories.UserRepository;
 import pl.pmerdala.springit.service.DateTimeFormatter;
+import pl.pmerdala.springit.service.UserService;
 
 import java.net.URISyntaxException;
 import java.util.List;
@@ -15,12 +14,14 @@ import java.util.stream.Collectors;
 public class MapLinkViewLinkData {
     private final MapCommentViewCommentData mapCommentViewCommentData;
     private final DateTimeFormatter dateTimeFormatter;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    public MapLinkViewLinkData(MapCommentViewCommentData mapCommentViewCommentData, DateTimeFormatter dateTimeFormatter, UserRepository userRepository) {
+    public MapLinkViewLinkData(MapCommentViewCommentData mapCommentViewCommentData,
+                               DateTimeFormatter dateTimeFormatter,
+                               UserService userService) {
         this.mapCommentViewCommentData = mapCommentViewCommentData;
         this.dateTimeFormatter = dateTimeFormatter;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     ViewLinkData viewLinkData(Link link) {
@@ -32,15 +33,11 @@ public class MapLinkViewLinkData {
                 .numberOfComments(link.getComments().size())
                 .formatCreationDate(dateTimeFormatter.format(link.getCreatedDate()))
                 .creationDate(link.getCreatedDate())
-                .createdBy(getUserFullName(link))
+                .createdBy(userService.getFullNameByCreatedBy(link))
                 .vote(link.getVoteCount())
                 .build();
         linkData.setComments(viewCommentDataList(link.getComments(), linkData));
         return linkData;
-    }
-
-    private String getUserFullName(Link link) {
-        return userRepository.findByLogin(link.getCreatedBy()).map(User::getUserFullName).orElse("Unknown");
     }
 
     Link link(CreateOrUpdateLinkData data) {

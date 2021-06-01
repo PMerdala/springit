@@ -2,9 +2,8 @@ package pl.pmerdala.springit.controller;
 
 import org.springframework.stereotype.Component;
 import pl.pmerdala.springit.domain.Comment;
-import pl.pmerdala.springit.domain.User;
-import pl.pmerdala.springit.repositories.UserRepository;
 import pl.pmerdala.springit.service.DateTimeFormatter;
+import pl.pmerdala.springit.service.UserService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,11 +12,11 @@ import java.util.stream.Collectors;
 public class MapCommentViewCommentData {
 
     private final DateTimeFormatter dateTimeFormatter;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    public MapCommentViewCommentData(DateTimeFormatter dateTimeFormatter, UserRepository userRepository) {
+    public MapCommentViewCommentData(DateTimeFormatter dateTimeFormatter, UserService userService) {
         this.dateTimeFormatter = dateTimeFormatter;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
 
@@ -27,7 +26,7 @@ public class MapCommentViewCommentData {
                 .body(comment.getBody())
                 .creationDate(comment.getCreatedDate())
                 .formatCreationDate(dateTimeFormatter.format(comment.getCreatedDate()))
-                .createdBy(getUserFullName(comment))
+                .createdBy(userService.getFullNameByCreatedBy(comment))
                 .link(link)
                 .build();
     }
@@ -36,9 +35,5 @@ public class MapCommentViewCommentData {
         return comments.stream()
                 .map(comment -> viewCommentData(comment, linkData))
                 .collect(Collectors.toUnmodifiableList());
-    }
-
-    private String getUserFullName(Comment comment) {
-        return userRepository.findByLogin(comment.getCreatedBy()).map(User::getUserFullName).orElse("Unknown");
     }
 }
