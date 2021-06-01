@@ -1,9 +1,11 @@
-package pl.pmerdala.springit.controller;
+package pl.pmerdala.springit.map;
 
 import org.springframework.stereotype.Component;
 import pl.pmerdala.springit.domain.Comment;
 import pl.pmerdala.springit.service.DateTimeFormatter;
 import pl.pmerdala.springit.service.UserService;
+import pl.pmerdala.springit.viewdata.ViewCommentData;
+import pl.pmerdala.springit.viewdata.ViewLinkData;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,7 +22,7 @@ public class MapCommentViewCommentData {
     }
 
 
-    ViewCommentData viewCommentData(Comment comment, ViewLinkData link) {
+    public ViewCommentData viewCommentData(Comment comment, ViewLinkData link) {
         return ViewCommentData.builder()
                 .id(comment.getId())
                 .body(comment.getBody())
@@ -31,7 +33,7 @@ public class MapCommentViewCommentData {
                 .build();
     }
 
-    List<ViewCommentData> viewCommentDataList(List<Comment> comments, ViewLinkData linkData) {
+    public List<ViewCommentData> viewCommentDataList(List<Comment> comments, ViewLinkData linkData) {
         return comments.stream()
                 .map(comment -> viewCommentData(comment, linkData))
                 .collect(Collectors.toUnmodifiableList());

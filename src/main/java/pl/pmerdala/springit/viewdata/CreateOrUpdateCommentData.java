@@ -1,4 +1,4 @@
-package pl.pmerdala.springit.controller;
+package pl.pmerdala.springit.viewdata;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,5 +11,5 @@ import javax.validation.constraints.NotEmpty;
 public class CreateOrUpdateCommentData {
     @NonNull
     @NotEmpty(message = "komentarz nie może być pusty")
-    String body;
+    private String body;
 }

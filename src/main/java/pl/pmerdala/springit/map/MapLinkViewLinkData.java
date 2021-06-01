@@ -1,10 +1,13 @@
-package pl.pmerdala.springit.controller;
+package pl.pmerdala.springit.map;
 
 import org.springframework.stereotype.Component;
 import pl.pmerdala.springit.domain.Comment;
 import pl.pmerdala.springit.domain.Link;
 import pl.pmerdala.springit.service.DateTimeFormatter;
 import pl.pmerdala.springit.service.UserService;
+import pl.pmerdala.springit.viewdata.CreateOrUpdateLinkData;
+import pl.pmerdala.springit.viewdata.ViewCommentData;
+import pl.pmerdala.springit.viewdata.ViewLinkData;
 
 import java.net.URISyntaxException;
 import java.util.List;
@@ -24,7 +27,7 @@ public class MapLinkViewLinkData {
         this.userService = userService;
     }
 
-    ViewLinkData viewLinkData(Link link) {
+    public ViewLinkData viewLinkData(Link link) {
         ViewLinkData linkData = ViewLinkData.builder()
                 .id(link.getId())
                 .title(link.getTitle())
@@ -40,17 +43,17 @@ public class MapLinkViewLinkData {
         return linkData;
     }
 
-    Link link(CreateOrUpdateLinkData data) {
+    public Link link(CreateOrUpdateLinkData data) {
         return new Link(data.getTitle(), data.getUrl(), data.getDescription());
     }
 
-    void updateLink(CreateOrUpdateLinkData data, Link link) {
+    public void updateLink(CreateOrUpdateLinkData data, Link link) {
         link.setTitle(data.getTitle());
         link.setUrl(data.getUrl());
         link.setDescription(data.getDescription());
     }
 
-    CreateOrUpdateLinkData createOrUpdateLinkData(Link link) {
+    public CreateOrUpdateLinkData createOrUpdateLinkData(Link link) {
         return CreateOrUpdateLinkData.builder()
                 .title(link.getTitle())
                 .url(link.getUrl())
@@ -58,7 +61,7 @@ public class MapLinkViewLinkData {
                 .build();
     }
 
-    List<ViewLinkData> viewLinkDataList(List<Link> links) {
+    public List<ViewLinkData> viewLinkDataList(List<Link> links) {
         return links.stream().map(this::viewLinkData).collect(Collectors.toUnmodifiableList());
     }
 

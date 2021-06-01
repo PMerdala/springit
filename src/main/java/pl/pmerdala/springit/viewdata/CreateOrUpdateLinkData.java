@@ -1,4 +1,4 @@
-package pl.pmerdala.springit.controller;
+package pl.pmerdala.springit.viewdata;
 
 import lombok.*;
 import org.hibernate.validator.constraints.URL;

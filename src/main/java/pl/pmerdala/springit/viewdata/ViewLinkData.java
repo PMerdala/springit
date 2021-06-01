@@ -1,4 +1,4 @@
-package pl.pmerdala.springit.controller;
+package pl.pmerdala.springit.viewdata;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

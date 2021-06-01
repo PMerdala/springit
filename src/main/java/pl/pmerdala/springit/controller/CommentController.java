@@ -11,6 +11,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pl.pmerdala.springit.domain.Comment;
 import pl.pmerdala.springit.repositories.CommentRepository;
 import pl.pmerdala.springit.repositories.LinkRepository;
+import pl.pmerdala.springit.viewdata.CreateOrUpdateCommentData;
 
 import javax.validation.Valid;
 import java.util.concurrent.atomic.AtomicReference;
@@ -37,7 +38,7 @@ public class CommentController {
         AtomicReference<String> action = new AtomicReference<>("redirect:/");
         linkRepository.findById(linkId).ifPresent(link -> {
             if (!bindingResult.hasErrors()) {
-                Comment comment = new Comment(commentData.body, link);
+                Comment comment = new Comment(commentData.getBody(), link);
                 Comment savedComment = commentRepository.save(comment);
                 link.addComment(savedComment);
                 redirectAttributes.addFlashAttribute("success_comment", true);

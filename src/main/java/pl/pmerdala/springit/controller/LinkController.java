@@ -10,7 +10,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pl.pmerdala.springit.domain.Link;
+import pl.pmerdala.springit.map.MapLinkViewLinkData;
 import pl.pmerdala.springit.repositories.LinkRepository;
+import pl.pmerdala.springit.viewdata.CreateOrUpdateCommentData;
+import pl.pmerdala.springit.viewdata.CreateOrUpdateLinkData;
+import pl.pmerdala.springit.viewdata.ViewLinkData;
 
 import javax.validation.Valid;
 import java.util.List;

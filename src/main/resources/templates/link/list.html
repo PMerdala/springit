@@ -3,7 +3,7 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <!--/*-->
-<!--@thymesVar id="links" type="java.util.List<pl.pmerdala.springit.controller.ViewLinkData>"-->
+<!--@thymesVar id="links" type="java.util.List<pl.pmerdala.springit.viewdata.ViewLinkData>"-->
 <!--*/-->
 <!--suppress HtmlRequiredTitleElement -->
 <head th:replace="~{layouts/main_layout :: head(title = 'Springit - Spring Boot Reddit Clone')}">
@@ -50,6 +50,7 @@
     const allVotes = document.querySelectorAll(".upvote, .downvote");
     for (let i=0; i<allVotes.length;i++){
         let className=allVotes[i].className;
+        // noinspection JSUnusedLocalSymbols
         allVotes[i].addEventListener('click',function(event){
            const direction = className==='upvote'? 1:-1;
            const linkId = this.getAttribute('data-id');
