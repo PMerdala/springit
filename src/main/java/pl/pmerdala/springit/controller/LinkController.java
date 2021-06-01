@@ -42,8 +42,19 @@ public class LinkController {
             return "redirect:/";
         }
         ViewLinkData viewLinkData = mapLinkViewLinkData.viewLinkData(link.get());
+        CreateOrUpdateCommentData commentData = new CreateOrUpdateCommentData();
+        model.addAttribute("commentData", commentData);
+        model.addAttribute("commentAddAction", String.format("/link/%d/comments", link.get().getId()));
         model.addAttribute("link", viewLinkData);
-        model.addAttribute("success", model.containsAttribute("success"));
+        model.addAttribute("success",
+                model.containsAttribute("success")
+                        || model.containsAttribute("success_comment"));
+        if (model.containsAttribute("success")) {
+            model.addAttribute("success_message", "link create success!");
+        }
+        if (model.containsAttribute("success_comment")) {
+            model.addAttribute("success_message", "comment create success!");
+        }
         return "link/view";
     }
 

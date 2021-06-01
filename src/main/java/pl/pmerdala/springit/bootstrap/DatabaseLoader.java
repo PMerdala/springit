@@ -5,15 +5,18 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import pl.pmerdala.springit.config.Constants;
+import pl.pmerdala.springit.domain.Comment;
 import pl.pmerdala.springit.domain.Link;
 import pl.pmerdala.springit.domain.Role;
 import pl.pmerdala.springit.domain.User;
+import pl.pmerdala.springit.repositories.CommentRepository;
 import pl.pmerdala.springit.repositories.LinkRepository;
 import pl.pmerdala.springit.repositories.RoleRepository;
 import pl.pmerdala.springit.repositories.UserRepository;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 @Slf4j
@@ -21,13 +24,15 @@ public class DatabaseLoader implements CommandLineRunner {
     private final LinkRepository linkRepository;
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
 
-    public DatabaseLoader(LinkRepository linkRepository, RoleRepository roleRepository, UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+    public DatabaseLoader(LinkRepository linkRepository, RoleRepository roleRepository, UserRepository userRepository, CommentRepository commentRepository, BCryptPasswordEncoder passwordEncoder) {
         this.linkRepository = linkRepository;
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
+        this.commentRepository = commentRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -87,9 +92,23 @@ public class DatabaseLoader implements CommandLineRunner {
 
             links.entrySet().stream()
                     .map(linkData -> new Link(linkData.getKey(), linkData.getValue()))
-                    .forEach(linkRepository::save);
+                    .forEach(link -> {
+                        linkRepository.save(link);
+                        addCommentToLink(link);
+                    });
         }
 
         log.info(String.format("Number of links in database %d", linkRepository.count()));
+    }
+
+    private void addCommentToLink(final Link link) {
+        Stream.of("Thank you for this link related to Spring boot. I love it, great post!",
+                "I love that you're talking about Spring Security",
+                "What is this Progressive Web App thing all about? PWAs sound really cool.")
+                .map(comment -> new Comment(comment, link))
+                .forEach(comment -> {
+                    commentRepository.save(comment);
+                    link.addComment(comment);
+                });
     }
 }

@@ -17,4 +17,5 @@ public class ViewCommentData {
     private LocalDateTime creationDate;
     private String formatCreationDate;
     private ViewLinkData link;
+    private String createdBy;
 }
