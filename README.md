@@ -30,6 +30,11 @@ TODO: Installing
 
 Explain how to run the automated tests for this system
 
+start docker dla mailDev Server 
+```
+docker run -d -p 1080:80 -p 1025:25 maildev/maildev
+```
+więcej informacji na stronie https://hub.docker.com/r/maildev/maildev 
 ### Break down into end to end tests
 
 Explain what these tests test and why
