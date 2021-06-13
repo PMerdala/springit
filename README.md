@@ -7,6 +7,7 @@ Example Spring Boot Reddit Clone
 
 TODO: How to get started?
 [Documentation](https://github.com/danvega/springit-course-docs)
+[Documentation 2](https://www.danvega.dev/docs/spring-boot-2-docs/)
 
 ### Prerequisites
 

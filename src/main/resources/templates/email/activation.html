@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width; initial-scale=1.0">
+    <title>Title</title>
+</head>
+<body>
+<h1>Springit User Activation</h1>
+<p th:text="|Dear ${user.getUserFullName()}|">Dear User Name</p>
+<p>Thank you for signing up for a free account with us at Springit. Please Click on the link below to activate your account.</p>
+<a th:href="${baseURL} + '/activate/'+ ${user.getEmail()} + '/' + ${user.getActivationCode()}">Activate Account</a>
+</body>
+</html>

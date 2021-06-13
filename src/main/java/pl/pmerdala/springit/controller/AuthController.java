@@ -5,6 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pl.pmerdala.springit.domain.User;
@@ -54,5 +55,14 @@ public class AuthController {
     @GetMapping("/profile")
     String profile() {
         return "auth/profile";
+    }
+
+    @GetMapping("/activate/{userEmail}/{activationCode}")
+    String activate(@PathVariable("userEmail") String userEmail, @PathVariable("activationCode")String activationCode){
+        boolean activated = userService.activate(userEmail,activationCode);
+        if (activated){
+            return "auth/activated";
+        }
+        return "redirect:/";
     }
 }

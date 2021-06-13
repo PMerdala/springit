@@ -1,7 +1,6 @@
 package pl.pmerdala.springit.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.pmerdala.springit.domain.Auditable;
 import pl.pmerdala.springit.domain.User;
@@ -18,15 +17,15 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final RoleService roleService;
+    private final EmailService emailService;
     private final MapUserRegisterUserData mapUserRegisterUserData;
-    private final BCryptPasswordEncoder passwordEncoder;
 
 
-    public UserService(UserRepository userRepository, RoleService roleService, MapUserRegisterUserData mapUserRegisterUserData, BCryptPasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, RoleService roleService, EmailService emailService, MapUserRegisterUserData mapUserRegisterUserData) {
         this.userRepository = userRepository;
         this.roleService = roleService;
+        this.emailService = emailService;
         this.mapUserRegisterUserData = mapUserRegisterUserData;
-        this.passwordEncoder = passwordEncoder;
     }
 
     public String getFullNameByLogin(String login) {
@@ -39,7 +38,6 @@ public class UserService {
 
     public Optional<User> register(RegisterUserData userData) {
         User user = mapUserRegisterUserData.user(userData);
-        String confirmPasswordEncypt = passwordEncoder.encode(userData.getConfirmPassword());
         user.setActivationCode(UUID.randomUUID().toString());
         user.addRole(roleService.findByName("ROLE_USER"));
         user.setEnabled(false);
@@ -48,11 +46,28 @@ public class UserService {
         return Optional.of(savedUser);
     }
 
-    private void sendActivationEmail(User savedUser) {
-        log.info("Send email to " +savedUser);
+    public boolean activate(String email, String activationCode) {
+        Optional<User> optionalUser = userRepository.findByEmailAndActivationCode(email, activationCode);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setEnabled(true);
+            user.setActivationCode(null);
+            User savedUser = save(user);
+            sendWelcomeEmail(savedUser);
+            return true;
+        }
+        return false;
     }
 
-    public Optional<RegisterUserData> registerUserDataForRegistration(){
+    private void sendActivationEmail(User user) {
+        emailService.sendActivationEmail(user);
+    }
+
+    private void sendWelcomeEmail(User user) {
+        emailService.sendWelcomeEmail(user);
+    }
+
+    public Optional<RegisterUserData> registerUserDataForRegistration() {
         return Optional.of(new RegisterUserData());
     }
 

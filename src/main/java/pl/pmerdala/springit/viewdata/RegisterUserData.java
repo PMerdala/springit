@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import pl.pmerdala.springit.viewdata.validator.PasswordsMatch;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -12,6 +13,7 @@ import javax.validation.constraints.Size;
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
+@PasswordsMatch
 public class RegisterUserData {
     @NonNull
     @NotEmpty(message = "Imię musi być podane")
