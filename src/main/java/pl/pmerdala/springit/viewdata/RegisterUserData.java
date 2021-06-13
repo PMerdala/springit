@@ -6,6 +6,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 @Data
@@ -13,11 +14,25 @@ import javax.validation.constraints.Size;
 @RequiredArgsConstructor
 public class RegisterUserData {
     @NonNull
-    private String userFullName;
+    @NotEmpty(message = "Imię musi być podane")
+    private String firstName;
+    @NonNull
+    @NotEmpty(message = "Nazwisko musi być podane")
+    private String lastName;
+    @NonNull
+    @NotEmpty(message = "Alias musi być podany")
+    private String alias;
     @NonNull
     @Size(min = 6, max = 100)
+    @NotEmpty(message = "email musi być podany")
     @Email
     private String email;
     @NonNull
+    @NotEmpty(message = "hasło musi być podane")
+    @Size(min = 6, max = 100)
     private String password;
+    @NonNull
+    @NotEmpty(message = "potwierdzenie hasła musi być podane")
+    @Size(min = 6, max = 100)
+    private String confirmPassword;
 }

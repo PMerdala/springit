@@ -26,7 +26,13 @@ public class User extends Auditable implements UserDetails {
     private Long id;
     @NonNull
     @Column(nullable = false)
-    private String userFullName;
+    private String firstName;
+    @NonNull
+    @Column(nullable = false)
+    private String lastName;
+    @NonNull
+    @Column(nullable = false)
+    private String alias;
     @NonNull
     @Size(min = 6, max = 100)
     @Column(nullable = false, unique = true)
@@ -41,6 +47,7 @@ public class User extends Auditable implements UserDetails {
     private LocalDateTime expiredDate;
     private Boolean accountLocked;
     private LocalDateTime credentialsExpiredDate;
+    private String activationCode;
 
     @NonNull
     @Column(nullable = false)
@@ -85,6 +92,10 @@ public class User extends Auditable implements UserDetails {
         return email;
     }
 
+    public String getUserFullName() {
+        return firstName+ " " + lastName;
+    }
+
     public void addRoles(Collection<Role> newRoles) {
         roles.addAll(newRoles);
     }
@@ -97,5 +108,10 @@ public class User extends Auditable implements UserDetails {
     @PreUpdate
     private void prepare() {
         login = email.toLowerCase(Locale.ROOT);
+    }
+
+    @Override
+    public String toString(){
+        return String.format("%s (%d)", login,id);
     }
 }

@@ -45,12 +45,12 @@ public class DatabaseLoader implements CommandLineRunner {
     }
 
     private void loadUsers() {
-        loadUser("user@gmail.com", "User", "password", new String[]{Constants.ROLE_USER});
-        loadUser("admin@gmail.com", "Admin", "password", new String[]{Constants.ROLE_ADMIN});
-        loadUser("super@gmail.com", "Super Admin", "password", new String[]{Constants.ROLE_ADMIN, Constants.ROLE_USER});
+        loadUser("user@gmail.com","Jack", "Sparrow","User", "password", new String[]{Constants.ROLE_USER});
+        loadUser("admin@gmail.com","Paul", "Kappur", "Admin","password", new String[]{Constants.ROLE_ADMIN});
+        loadUser("super@gmail.com", "Dorota","Swang","Super Admin", "password", new String[]{Constants.ROLE_ADMIN, Constants.ROLE_USER});
     }
 
-    private void loadUser(String email, String username, String password, String[] roleNames) {
+    private void loadUser(String email, String firstName, String lastName, String alias, String password, String[] roleNames) {
         if (userRepository.findByLogin(email.toLowerCase(Locale.ROOT)).isPresent()) {
             return;
         }
@@ -60,7 +60,7 @@ public class DatabaseLoader implements CommandLineRunner {
                 .map(Optional::get)
                 .collect(Collectors.toUnmodifiableList());
         String encryptPassword = passwordEncoder.encode(password);
-        User user = new User(username, email, encryptPassword, true);
+        User user = new User(firstName,lastName,alias, email, encryptPassword, true);
         user.addRoles(roles);
         userRepository.save(user);
     }

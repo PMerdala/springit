@@ -24,4 +24,9 @@ public class Role extends Auditable {
 
     @ManyToMany(mappedBy = "roles")
     private Collection<User> users;
+
+    @Override
+    public String toString(){
+        return String.format("%s (%d)", name,id) ;
+    }
 }
